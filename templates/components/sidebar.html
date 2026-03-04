@@ -1,0 +1,139 @@
+<!-- SHARED SIDEBAR COMPONENT -->
+<aside class="sidebar-left">
+    <!-- Brand -->
+    <!-- Brand -->
+    <div class="brand"
+        style="display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:15px; padding-left:15px;">
+        <img src="/static/img/edtech_icon.svg" alt="EDTech" style="height:54px; width:54px; flex-shrink:0;">
+        <div style="display:flex; flex-direction:column; align-items:flex-start;">
+            <div class="logo-text">
+                <span class="brand-highlight" style="line-height:0.9; font-size:1.8rem;">EDTECH</span>
+                <span class="brand-sub" style="margin-top:2px; font-size:0.75rem;">DOC templater</span>
+            </div>
+            <div class="version" style="margin-top:4px;">v3.5 Pro</div>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <div class="settings-group" style="margin-bottom: 15px;">
+        <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:5px;">Plantillas</label>
+        <div style="display:flex; gap:5px;">
+            <button id="importTemplateBtn" class="btn-mini btn-outline" style="flex:1; justify-content:center;"
+                title="Cargar Plantilla">
+                <i class="fa-solid fa-file-import"></i> Cargar
+            </button>
+            <button id="exportTemplateBtn" class="btn-mini btn-outline" style="flex:1; justify-content:center;"
+                title="Guardar Plantilla">
+                <i class="fa-solid fa-file-export"></i> Guardar
+            </button>
+            <input type="file" id="templateInput" accept=".edd" hidden>
+        </div>
+    </div>
+
+    <!-- Document Images (Compact Inline) -->
+    <div class="settings-group">
+        <h3><i class="fa-solid fa-images"></i> Imágenes del Documento</h3>
+        <div class="img-upload-list">
+
+            <!-- Portada -->
+            <div class="img-upload-row" id="coverRow">
+                <div class="img-row-icon" style="color:var(--primary)"><i class="fa-regular fa-image"></i></div>
+                <span class="img-row-label">Portada</span>
+                <div class="img-row-thumb" id="coverThumb"></div>
+                <input type="file" id="coverInput" accept="image/*" hidden>
+                <button class="img-row-btn" id="coverUploadBtn" title="Subir imagen">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Encabezado -->
+            <div class="img-upload-row" id="headerRow">
+                <div class="img-row-icon" style="color:#5b8fff"><i class="fa-solid fa-angle-up"></i></div>
+                <span class="img-row-label">Encabezado</span>
+                <div class="img-row-thumb" id="headerThumb"></div>
+                <input type="file" id="headerInput" accept="image/*,.emf,.wmf" hidden>
+                <button class="img-row-btn" id="headerUploadBtn" title="Subir imagen">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Pie de Página -->
+            <div class="img-upload-row" id="footerRow">
+                <div class="img-row-icon" style="color:#93b4ff"><i class="fa-solid fa-angle-down"></i></div>
+                <span class="img-row-label">Pie de Página</span>
+                <div class="img-row-thumb" id="footerThumb"></div>
+                <input type="file" id="footerInput" accept="image/*,.emf,.wmf" hidden>
+                <button class="img-row-btn" id="footerUploadBtn" title="Subir imagen">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Contraportada -->
+            <div class="img-upload-row" id="backpageRow">
+                <div class="img-row-icon" style="color:var(--primary)"><i class="fa-regular fa-clone"></i></div>
+                <span class="img-row-label">Contraportada</span>
+                <div class="img-row-thumb" id="backpageThumb"></div>
+                <input type="file" id="backpageInput" accept="image/*" hidden>
+                <button class="img-row-btn" id="backpageUploadBtn" title="Subir imagen">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- Paper Size (Docs Specific - Hidden in Excel via JS or CSS if needed, but keeping for uniformity) -->
+    <div class="settings-group" id="paperSizeGroup">
+        <h3><i class="fa-solid fa-print"></i> Formato de Papel</h3>
+        <div class="paper-selector">
+            <label class="paper-card active" data-value="letter">
+                <div class="icon"><i class="fa-regular fa-file"></i></div>
+                <span class="p-name">CARTA</span>
+                <span class="p-dim">21.6 x 27.9 cm</span>
+            </label>
+            <label class="paper-card" data-value="a4">
+                <div class="icon"><i class="fa-regular fa-file-lines"></i></div>
+                <span class="p-name">A4</span>
+                <span class="p-dim">21.0 x 29.7 cm</span>
+            </label>
+            <label class="paper-card" data-value="legal">
+                <div class="icon"><i class="fa-solid fa-file-contract"></i></div>
+                <span class="p-name">OFICIO</span>
+                <span class="p-dim">21.6 x 35.6 cm</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Toggles -->
+    <div class="settings-group">
+        <h3><i class="fa-solid fa-sliders"></i> Configuración</h3>
+        <label class="toggle-row">
+            <span>Forzar Estilos</span>
+            <input type="checkbox" checked id="forceStyles">
+            <div class="toggle-switch"></div>
+        </label>
+        <label class="toggle-row">
+            <span>OCR Tablas</span>
+            <input type="checkbox" id="cfgOcrTables">
+            <div class="toggle-switch"></div>
+        </label>
+        <label class="toggle-row">
+            <span>Índice</span>
+            <input type="checkbox" id="cfgToc">
+            <div class="toggle-switch"></div>
+        </label>
+        <div id="tesseractStatus" class="tesseract-status" style="display:none;">
+            <span class="tess-dot" id="tessDot"></span>
+            <span id="tessLabel">Verificando...</span>
+        </div>
+    </div>
+
+    <!-- Format Config Button -->
+    <div class="settings-group">
+        <button id="openConfigBtnSidebar" class="btn-select" style="width:100%; justify-content:center;">
+            <i class="fa-solid fa-paintbrush"></i> Configurar Formato
+        </button>
+    </div>
+</aside>

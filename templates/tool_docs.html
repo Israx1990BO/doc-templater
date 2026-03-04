@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unifranz Online | Formateador Profesional</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- COLUMN 1: LEFT SIDEBAR (SETTINGS) -->
+        {% include 'components/sidebar.html' %}
+
+        <!-- COLUMN 2: CENTER WORKSPACE (DROP ZONE & LIST) -->
+        <main class="workspace">
+            <div class="workspace-header">
+                <h2>Espacio de Trabajo</h2>
+                <span class="badge">Listo</span>
+            </div>
+
+            <div class="workspace-body">
+                <!-- CENTER STAGE: DROP ZONE -->
+                <div class="hero-zone" id="mainDropZone">
+                    <div class="hero-content">
+                        <i class="fa-solid fa-file-word main-icon"></i>
+                        <h2>Arrastra documentos DOCX aquí</h2>
+                        <p>El sistema aplicará automáticamente el estándar Unifranz Edtech (Fuentes, Tablas,
+                            Encabezados).</p>
+                        <button class="btn-select" onclick="document.getElementById('docInput').click()">
+                            <i class="fa-solid fa-folder-open"></i> Seleccionar Archivos
+                        </button>
+                        <input type="file" id="docInput" multiple accept=".docx" hidden>
+                    </div>
+                </div>
+
+                <!-- QUEUE LIST (Replaces Drop Zone when active) -->
+                <div class="production-queue" id="productionQueue">
+                    <div class="queue-header-actions">
+                        <span style="font-weight: 600; color: var(--text-muted);">
+                            Archivos: <span id="queueCount">0</span>
+                        </span>
+                        <div style="display:flex; gap:10px;">
+                            <button id="addMoreBtn" class="btn-mini btn-outline">
+                                <i class="fa-solid fa-plus"></i> Añadir
+                            </button>
+                            <button id="clearQueueBtn" class="btn-mini btn-outline">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="queue-list" id="queueList">
+                        <!-- JS Items go here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- COLUMN 3: RIGHT SIDEBAR (ACTIONS & LOGS) -->
+        <aside class="sidebar-right">
+            <div class="sidebar-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>Exportación</h3>
+            </div>
+
+            <div class="sidebar-right-content">
+
+                <!-- Carpeta de Salida -->
+                <div class="settings-group">
+                    <h3><i class="fa-regular fa-folder-open"></i> Carpeta de Salida</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <input type="text" id="outputFolderDisplay" readonly placeholder="./outputs (por defecto)"
+                            class="export-folder-input">
+                        <button id="selectFolderBtn" class="btn-select" style="justify-content:center; width:100%;">
+                            <i class="fa-solid fa-folder-tree"></i> Seleccionar Carpeta...
+                        </button>
+                        <input type="hidden" id="outputFolderValue">
+                    </div>
+                </div>
+
+                <!-- Nombre de Archivos (Prefix / Suffix) -->
+                <div class="settings-group">
+                    <h3><i class="fa-solid fa-pen-nib"></i> Nombre de Archivos</h3>
+                    <div class="prefix-suffix-grid">
+                        <div class="input-group">
+                            <label>Prefijo</label>
+                            <input type="text" id="filePrefix" value="FORMAT_" placeholder="ej: FORMAT_"
+                                class="export-text-input">
+                        </div>
+                        <div class="input-group">
+                            <label>Sufijo</label>
+                            <input type="text" id="fileSuffix" value="" placeholder="ej: _final"
+                                class="export-text-input">
+                        </div>
+                    </div>
+                    <div class="name-preview" id="namePreview">
+                        <i class="fa-solid fa-eye"></i>
+                        <span id="namePreviewText">FORMAT_documento.docx</span>
+                    </div>
+                </div>
+
+                <!-- Formato de Exportación -->
+                <div class="settings-group">
+                    <h3><i class="fa-solid fa-file-export"></i> Formato de Exportación</h3>
+                    <div class="format-selector" id="formatSelector">
+                        <button class="format-btn active" data-format="docx" title="Solo Word">
+                            <i class="fa-solid fa-file-word"></i>
+                            <span>DOCX</span>
+                        </button>
+                        <button class="format-btn" data-format="pdf" title="Solo PDF">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </button>
+                        <button class="format-btn" data-format="both" title="Word + PDF">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Ambos</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Post-Process Result -->
+                <div id="globalActions" class="export-result" style="display:none;">
+                    <div class="export-result-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h4>¡Proceso Finalizado!</h4>
+                    <p id="exportResultSummary">Archivos guardados correctamente.</p>
+                    <div class="export-result-path" id="exportResultPath"></div>
+                </div>
+
+            </div>
+
+            <!-- Process Button (pinned bottom) -->
+            <div class="sidebar-right-footer">
+                <button id="processBtn" class="btn-primary" disabled
+                    style="width:100%; justify-content:center; height:50px;">
+                    <span>INICIAR PROCESO</span>
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+
+        </aside>
+    </div>
+
+    <!-- ADVANCED CONFIG MODAL -->
+    {% include 'components/config_modal.html' %}
+
+    <script src="/static/js/main.js"></script>
+</body>
+
+</html>
